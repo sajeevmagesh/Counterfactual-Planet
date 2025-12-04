@@ -16,21 +16,21 @@ def prepare_co2_data(relevant_countries):
 
     df = df.sort_values(["country", "year"])
 
-    df = df[(df["year"] >= 1990) & (df["year"] <= 2023)]
+    df = df[(df["year"] >= 1989) & (df["year"] <= 2023)]
 
     co2 = defaultdict(float)
     for _, row in df.iterrows():
         if row["country"] in relevant_countries:
-            co2[row["country"] + " " + str(row["year"])] = row["co2"]
+            co2[row["country"] + "_" + str(row["year"])] = row["co2"]
 
-    deltas = defaultdict(float)
+    delta_co2 = defaultdict(float)
     for _, row in df.iterrows():
-        if row["country"] in relevant_countries:
-            for future_year in range(row["year"], min(2024, row["year"] + 11)):
-                delta = co2[row["country"] + " " + str(future_year)] - co2[row["country"] + " " + str(row["year"])]
-                deltas[row["country"] + " " + str(future_year) + " " + str(row["year"])] = delta
+        if row["country"] in relevant_countries and row["year"] >= 1990:
+            country_time = row["country"] + "_" + str(row["year"])
+            country_time2 = row["country"] + "_" + str(row["year"] - 1)
+            delta_co2[country_time] = co2[country_time] - co2[country_time2]
 
-    prepared_df = pd.DataFrame(list(deltas.items()), columns=['country time range', 'delta co2'])
+    prepared_df = pd.DataFrame(list(delta_co2.items()), columns=['country time', 'delta co2'])
     return prepared_df
 
 
@@ -43,39 +43,41 @@ def prepare_policy_data():
     policies = df['Climate actions and policies'].tolist()
     years = df['TIME_PERIOD'].tolist()
     stringency = df['OBS_VALUE'].tolist()
-    
-    yearly_data = defaultdict(list)
+
+    yearly_data = defaultdict(lambda: [[] for i in range(11)])
 
     for _, row in df.iterrows():
         country = row['Reference area']
         if country in CONSISTENT_COUNTRIES:
             country = CONSISTENT_COUNTRIES[country]
+
         policy = row['Climate actions and policies']
         year = row['TIME_PERIOD']
         stringency = row['OBS_VALUE']
-        
-        yearly_data[country + " " + str(year) + " " + str(year)].append((stringency, policy))
+
+        yearly_data[country + "_" + str(year)][0].append((stringency, policy))
 
         for future_year in range(year + 1, min(2024, year + 11)):
-            yearly_data[country + " " + str(future_year) + " " + str(year)].append((stringency, policy))
+            yearly_data[country + "_" + str(future_year)][future_year - year].append((stringency, policy))
 
-    for k in yearly_data.keys():
-        yearly_data[k] = sorted(yearly_data[k])
+    columns = ['country time', 'policies']
 
-    prepared_df = pd.DataFrame(list(yearly_data.items()), columns=['country time range', 'policies'])
+    prepared_df = pd.DataFrame(list(yearly_data.items()), columns=columns)
     return prepared_df
 
 def gen_list_of_countries():
     df = pd.read_csv('oecd-policies.csv')
+    df = df[['Reference area', 'Climate actions and policies', 'TIME_PERIOD', 'OBS_VALUE']].dropna()
+    df = df.loc[df.groupby(['Reference area', 'Climate actions and policies', 'TIME_PERIOD'])['OBS_VALUE'].idxmax()].dropna()
 
     relevant_countries = list(set(df["Reference area"].tolist()))
-    for country in relevant_countries:
-        if country in CONSISTENT_COUNTRIES:
-            country = CONSISTENT_COUNTRIES[country]
+    for i in range(len(relevant_countries)):
+        if relevant_countries[i] in CONSISTENT_COUNTRIES:
+            relevant_countries[i] = CONSISTENT_COUNTRIES[relevant_countries[i]]
 
     return relevant_countries
 
 co2_df = prepare_co2_data(gen_list_of_countries())
 policy_df = prepare_policy_data()
-df_combined = pd.merge(co2_df, policy_df, on='country time range', how='outer')
+df_combined = pd.merge(co2_df, policy_df, on='country time', how='outer')
 df_combined.to_csv('data.csv', index=False)
