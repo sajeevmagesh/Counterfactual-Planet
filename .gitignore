@@ -147,6 +147,18 @@ venv.bak/
 models/
 owid-co2-data.csv
 
+# Generated data artifacts
+data_processed/cleaned.csv
+data_processed/cleaned_*.parquet
+data_processed/feature_tensors/
+embeddings/
+results/attention_heatmap.png
+results/shap_numeric.png
+results/shap_numeric_values.npy
+results/counterfactuals/
+results/diagnostics.json
+results/interpretability/
+
 # Spyder project settings
 .spyderproject
 .spyproject
