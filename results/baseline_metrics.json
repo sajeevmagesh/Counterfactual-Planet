@@ -1,0 +1,121 @@
+{
+  "logistic_regression": {
+    "accuracy": 0.6353350739773717,
+    "f1": 0.7759957230686982,
+    "roc_auc": 0.5403185851092264,
+    "n_features": 33
+  },
+  "random_forest_classifier": {
+    "accuracy": 0.6823324630113142,
+    "f1": 0.7958612975391499,
+    "roc_auc": 0.6670329887481503,
+    "top_feature_importances": [
+      [
+        "co2_roll_mean_3",
+        0.054027118515863
+      ],
+      [
+        "co2_lag5",
+        0.0538447824830311
+      ],
+      [
+        "co2_roll_mean_5",
+        0.05051908434153031
+      ],
+      [
+        "co2_roll_std_3",
+        0.04689593887349329
+      ],
+      [
+        "co2_lag1",
+        0.044566666706051604
+      ],
+      [
+        "co2",
+        0.04451899783145775
+      ],
+      [
+        "year",
+        0.040190687071240946
+      ],
+      [
+        "co2_per_capita",
+        0.03962382931846595
+      ],
+      [
+        "co2_lag3",
+        0.03702218195762749
+      ],
+      [
+        "co2_per_capita_lag3",
+        0.035426013234535605
+      ],
+      [
+        "population_roll_std_3",
+        0.0314560526441378
+      ],
+      [
+        "population_roll_mean_3",
+        0.02948565620665433
+      ],
+      [
+        "population_roll_mean_5",
+        0.028301048180549515
+      ],
+      [
+        "co2_per_capita_lag1",
+        0.027860598755293432
+      ],
+      [
+        "co2_per_capita_lag5",
+        0.02572317420741184
+      ],
+      [
+        "population_lag3",
+        0.025369276157678776
+      ],
+      [
+        "population_lag1",
+        0.024962072119715364
+      ],
+      [
+        "population",
+        0.023440262539767876
+      ],
+      [
+        "population_lag5",
+        0.023232666735182553
+      ],
+      [
+        "gdp",
+        0.014986716899318969
+      ]
+    ],
+    "n_features": 9461
+  },
+  "gradient_boosting_regressor": {
+    "mae": 3.6960720486205405,
+    "rmse": 20.480998314019804,
+    "n_features": 9461
+  },
+  "trivial_baseline": {
+    "accuracy": 0.6231505657093125,
+    "f1": 0.7653752370631265,
+    "roc_auc": 0.4972811560851907,
+    "developed_countries": [
+      "ARE",
+      "HKG",
+      "ISL",
+      "KWT",
+      "LUX",
+      "QAT",
+      "SAU"
+    ],
+    "threshold_gdp_per_capita": 20000
+  },
+  "time_series_baseline": {
+    "mae": 3.6847238799970765,
+    "rmse": 21.94872203626432,
+    "evaluated_points": 4561
+  }
+}
